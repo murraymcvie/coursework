@@ -1,19 +1,19 @@
-# 
+#
 # Tango with Django 2 Progress Tests
 # By Leif Azzopardi and David Maxwell
 # With assistance from Gerardo A-C (https://github.com/gerac83) and Enzo Roiz (https://github.com/enzoroiz)
-# 
+#
 # Chapter 9 -- Forms
 # Last updated: February 6th, 2020
 # Revising Author: David Maxwell
-# 
+#
 
 #
 # In order to run these tests, copy this module to your tango_with_django_project/rango/ directory.
 # Once this is complete, run $ python manage.py test rango.tests_chapter9
-# 
+#
 # The tests will then be run, and the output displayed -- do you pass them all?
-# 
+#
 # Once you are done with the tests, delete the module. You don't need to put it in your Git repository!
 #
 
@@ -118,10 +118,10 @@ class Chapter9ModelTests(TestCase):
 
                     self.assertEqual(type(attr), expected_types[attr_name], f"{FAILURE_HEADER}The type of attribute for '{attr_name}' was '{type(attr)}'; we expected '{expected_types[attr_name]}'. Check your definition of the UserProfile model.{FAILURE_FOOTER}")
                     setattr(user_profile, attr_name, expected_attributes[attr_name])
-        
+
         self.assertEqual(found_count, len(expected_attributes.keys()), f"{FAILURE_HEADER}In the UserProfile model, we found {found_count} attributes, but were expecting {len(expected_attributes.keys())}. Check your implementation and try again.{FAILURE_FOOTER}")
         user_profile.save()
-    
+
 
     def test_model_admin_interface_inclusion(self):
         """
@@ -145,30 +145,30 @@ class Chapter9RegisterFormClassTests(TestCase):
         Tests whether UserForm is in the correct place, and whether the correct fields have been specified for it.
         """
         self.assertTrue('UserForm' in dir(forms), f"{FAILURE_HEADER}We couldn't find the UserForm class in Rango's forms.py module. Did you create it in the right place?{FAILURE_FOOTER}")
-        
+
         user_form = forms.UserForm()
         self.assertEqual(type(user_form.__dict__['instance']), User, f"{FAILURE_HEADER}Your UserForm does not match up to the User model. Check your Meta definition of UserForm and try again.{FAILURE_FOOTER}")
 
         fields = user_form.fields
-        
+
         expected_fields = {
             'username': django_fields.CharField,
             'email': django_fields.EmailField,
             'password': django_fields.CharField,
         }
-        
+
         for expected_field_name in expected_fields:
             expected_field = expected_fields[expected_field_name]
 
             self.assertTrue(expected_field_name in fields.keys(), f"{FAILURE_HEADER}The field {expected_field_name} was not found in the UserForm form. Check you have complied with the specification, and try again.{FAILURE_FOOTER}")
             self.assertEqual(expected_field, type(fields[expected_field_name]), f"{FAILURE_HEADER}The field {expected_field_name} in UserForm was not of the correct type. Expected {expected_field}; got {type(fields[expected_field_name])}.{FAILURE_FOOTER}")
-    
+
     def test_user_profile_form(self):
         """
         Tests whether UserProfileForm is in the correct place, and whether the correct fields have been specified for it.
         """
         self.assertTrue('UserProfileForm' in dir(forms), f"{FAILURE_HEADER}We couldn't find the UserProfileForm class in Rango's forms.py module. Did you create it in the right place?{FAILURE_FOOTER}")
-        
+
         user_profile_form = forms.UserProfileForm()
         self.assertEqual(type(user_profile_form.__dict__['instance']), rango.models.UserProfile, f"{FAILURE_HEADER}Your UserProfileForm does not match up to the UserProfile model. Check your Meta definition of UserProfileForm and try again.{FAILURE_FOOTER}")
 
@@ -201,9 +201,9 @@ class Chapter9RegistrationTests(TestCase):
             url = reverse('rango:register')
         except:
             pass
-        
+
         self.assertEqual(url, '/rango/register/', f"{FAILURE_HEADER}Have you created the rango:register URL mapping correctly? It should point to the new register() view, and have a URL of '/rango/register/' Remember the first part of the URL (/rango/) is handled by the project's urls.py module, and the second part (register/) is handled by the Rango app's urls.py module.{FAILURE_FOOTER}")
-    
+
     def test_registration_template(self):
         """
         Does the register.html template exist in the correct place, and does it make use of template inheritance?
@@ -236,7 +236,7 @@ class Chapter9RegistrationTests(TestCase):
         self.assertTrue('action="/rango/register/"' in content, f"{FAILURE_HEADER}Is your <form> in register.html pointing to the correct URL for registering a user?{FAILURE_FOOTER}")
         self.assertTrue('<input type="submit" name="submit" value="Register" />' in content, f"{FAILURE_HEADER}We couldn't find the markup for the form submission button in register.html. Check it matches what is in the book, and try again.{FAILURE_FOOTER}")
         self.assertTrue('<p><label for="id_password">Password:</label> <input type="password" name="password" required id="id_password"></p>' in content, f"{FAILURE_HEADER}Checking a random form field in register.html (password), the markup didn't match what we expected. Is your password form field configured correctly?{FAILURE_FOOTER}")
-    
+
     def test_bad_registration_post_response(self):
         """
         Checks the POST response of the registration view.
@@ -246,7 +246,7 @@ class Chapter9RegistrationTests(TestCase):
         content = request.content.decode('utf-8')
 
         self.assertTrue('<ul class="errorlist">' in content)
-    
+
     def test_good_form_creation(self):
         """
         Tests the functionality of the forms.
@@ -265,15 +265,15 @@ class Chapter9RegistrationTests(TestCase):
         user_object = user_form.save()
         user_object.set_password(user_data['password'])
         user_object.save()
-        
+
         user_profile_object = user_profile_form.save(commit=False)
         user_profile_object.user = user_object
         user_profile_object.save()
-        
+
         self.assertEqual(len(User.objects.all()), 1, f"{FAILURE_HEADER}We were expecting to see a User object created, but it didn't appear. Check your UserForm implementation, and try again.{FAILURE_FOOTER}")
         self.assertEqual(len(rango.models.UserProfile.objects.all()), 1, f"{FAILURE_HEADER}We were expecting to see a UserProfile object created, but it didn't appear. Check your UserProfileForm implementation, and try again.{FAILURE_FOOTER}")
         self.assertTrue(self.client.login(username='testuser', password='test123'), f"{FAILURE_HEADER}We couldn't log our sample user in during the tests. Please check your implementation of UserForm and UserProfileForm.{FAILURE_FOOTER}")
-    
+
     def test_good_registration_post_response(self):
         """
         Checks the POST response of the registration view.
@@ -298,7 +298,7 @@ class Chapter9RegistrationTests(TestCase):
         base_path = os.path.join(template_base_path, 'base.html')
         template_str = get_template(base_path)
         self.assertTrue('<li><a href="{% url \'rango:register\' %}">Sign Up</a></li>' in template_str)
-    
+
 
 class Chapter9LoginTests(TestCase):
     """
@@ -314,7 +314,7 @@ class Chapter9LoginTests(TestCase):
             url = reverse('rango:login')
         except:
             pass
-        
+
         self.assertEqual(url, '/rango/login/', f"{FAILURE_HEADER}Have you created the rango:login URL mapping correctly? It should point to the new login() view, and have a URL of '/rango/login/' Remember the first part of the URL (/rango/) is handled by the project's urls.py module, and the second part (login/) is handled by the Rango app's urls.py module.{FAILURE_FOOTER}")
 
     def test_login_functionality(self):
@@ -324,7 +324,7 @@ class Chapter9LoginTests(TestCase):
         user_object = create_user_object()
 
         response = self.client.post(reverse('rango:login'), {'username': 'testuser', 'password': 'testabc123'})
-        
+
         try:
             self.assertEqual(user_object.id, int(self.client.session['_auth_user_id']), f"{FAILURE_HEADER}We attempted to log a user in with an ID of {user_object.id}, but instead logged a user in with an ID of {self.client.session['_auth_user_id']}. Please check your login() view.{FAILURE_FOOTER}")
         except KeyError:
@@ -350,7 +350,7 @@ class Chapter9LoginTests(TestCase):
 
         self.assertTrue(re.search(full_title_pattern, content), f"{FAILURE_HEADER}The <title> of the response for 'rango:login' is not correct. Check your login.html template, and try again.{FAILURE_FOOTER}")
         self.assertTrue(re.search(block_title_pattern, template_str), f"{FAILURE_HEADER}Is login.html using template inheritance? Is your <title> block correct?{FAILURE_FOOTER}")
-    
+
     def test_login_template_content(self):
         """
         Some simple checks for the login.html template. Is the required text present?
@@ -358,12 +358,12 @@ class Chapter9LoginTests(TestCase):
         template_base_path = os.path.join(settings.TEMPLATE_DIR, 'rango')
         template_path = os.path.join(template_base_path, 'login.html')
         self.assertTrue(os.path.exists(template_path), f"{FAILURE_HEADER}We couldn't find the 'login.html' template in the 'templates/rango/' directory. Did you put it in the right place?{FAILURE_FOOTER}")
-        
+
         template_str = get_template(template_path)
         self.assertTrue('<h1>Login to Rango</h1>' in template_str, f"{FAILURE_HEADER}We couldn't find the '<h1>Login to Rango</h1>' in the login.html template.{FAILURE_FOOTER}")
         self.assertTrue('action="{% url \'rango:login\' %}"' in template_str, f"{FAILURE_HEADER}We couldn't find the url lookup for 'rango:login' in your login.html <form>.{FAILURE_FOOTER}")
         self.assertTrue('<input type="submit" value="submit" />' in template_str, f"{FAILURE_HEADER}We couldn't find the submit button in your login.html template. Check it matches what is in the book, and try again.{FAILURE_FOOTER}")
-    
+
     def test_homepage_greeting(self):
         """
         Checks to see if the homepage greeting changes when a user logs in.
@@ -373,7 +373,7 @@ class Chapter9LoginTests(TestCase):
 
         create_user_object()
         self.client.login(username='testuser', password='testabc123')
-        
+
         content = self.client.get(reverse('rango:index')).content.decode()
         self.assertTrue('howdy testuser!' in content, f"{FAILURE_HEADER}After logging a user, we didn't see the expected message welcoming them on the homepage. Check your index.html template.{FAILURE_FOOTER}")
 
@@ -392,19 +392,19 @@ class Chapter9RestrictedAccessTests(TestCase):
             url = reverse('rango:restricted')
         except:
             pass
-        
+
         self.assertEqual(url, '/rango/restricted/', f"{FAILURE_HEADER}Have you created the rango:restricted URL mapping correctly? It should point to the new restricted() view, and have a URL of '/rango/restricted/' Remember the first part of the URL (/rango/) is handled by the project's urls.py module, and the second part (restricted/) is handled by the Rango app's urls.py module.{FAILURE_FOOTER}")
-    
+
     def test_bad_request(self):
         """
         Tries to access the restricted view when not logged in.
         This should redirect the user to the login page.
         """
         response = self.client.get(reverse('rango:restricted'))
-        
+
         self.assertEqual(response.status_code, 302, f"{FAILURE_HEADER}We tried to access the restricted view when not logged in. We expected to be redirected, but were not. Check your restricted() view.{FAILURE_FOOTER}")
         self.assertTrue(response.url.startswith(reverse('rango:login')), f"{FAILURE_HEADER}We tried to access the restricted view when not logged in, and were expecting to be redirected to the login view. But we were not! Please check your restricted() view.{FAILURE_FOOTER}")
-    
+
     def test_good_request(self):
         """
         Attempts to access the restricted view when logged in.
@@ -429,7 +429,7 @@ class Chapter9LogoutTests(TestCase):
         response = self.client.get(reverse('rango:logout'))
         self.assertTrue(response.status_code, 302)
         self.assertTrue(response.url, reverse('rango:login'))
-    
+
     def test_good_request(self):
         """
         Attempts to log out a user who IS logged in.
@@ -442,7 +442,7 @@ class Chapter9LogoutTests(TestCase):
             self.assertEqual(user_object.id, int(self.client.session['_auth_user_id']), f"{FAILURE_HEADER}We attempted to log a user in with an ID of {user_object.id}, but instead logged a user in with an ID of {self.client.session['_auth_user_id']}. Please check your login() view. This happened when testing logout functionality.{FAILURE_FOOTER}")
         except KeyError:
             self.assertTrue(False, f"{FAILURE_HEADER}When attempting to log a user in, it failed. Please check your login() view and try again.{FAILURE_FOOTER}")
-        
+
         # Now lot the user out. This should cause a redirect to the homepage.
         response = self.client.get(reverse('rango:logout'))
         self.assertEqual(response.status_code, 302, f"{FAILURE_HEADER}Logging out a user should cause a redirect, but this failed to happen. Please check your logout() view.{FAILURE_FOOTER}")
@@ -470,7 +470,7 @@ class Chapter9LinkTidyingTests(TestCase):
         content = self.client.get(reverse('rango:index')).content.decode()
         self.assertTrue('href="/rango/about/"' in content, f"{FAILURE_HEADER}Please check the links in your base.html have been updated correctly to change when users log in and out.{FAILURE_FOOTER}")
         self.assertTrue('href="/rango/"' in content, f"{FAILURE_HEADER}Please check the links in your base.html have been updated correctly to change when users log in and out.{FAILURE_FOOTER}")
-    
+
     def test_logged_in_links(self):
         """
         Checks for links that should only be displayed when the user is logged in.
@@ -486,7 +486,7 @@ class Chapter9LinkTidyingTests(TestCase):
         # These should not be present.
         self.assertTrue('href="/rango/login/"' not in content, f"{FAILURE_HEADER}Please check the links in your base.html have been updated correctly to change when users log in and out.{FAILURE_FOOTER}")
         self.assertTrue('href="/rango/register/"' not in content, f"{FAILURE_HEADER}Please check the links in your base.html have been updated correctly to change when users log in and out.{FAILURE_FOOTER}")
-    
+
     def test_logged_out_links(self):
         """
         Checks for links that should only be displayed when the user is not logged in.
@@ -496,7 +496,7 @@ class Chapter9LinkTidyingTests(TestCase):
         # These should be present.
         self.assertTrue('href="/rango/login/"' in content, f"{FAILURE_HEADER}Please check the links in your base.html have been updated correctly to change when users log in and out.{FAILURE_FOOTER}")
         self.assertTrue('href="/rango/register/"' in content, f"{FAILURE_HEADER}Please check the links in your base.html have been updated correctly to change when users log in and out.{FAILURE_FOOTER}")
-        
+
         # These should not be present.
         self.assertTrue('href="/rango/restricted/"' not in content, f"{FAILURE_HEADER}Please check the links in your base.html have been updated correctly to change when users log in and out.{FAILURE_FOOTER}")
         self.assertTrue('href="/rango/logout/"' not in content, f"{FAILURE_HEADER}Please check the links in your base.html have been updated correctly to change when users log in and out.{FAILURE_FOOTER}")
@@ -514,7 +514,7 @@ class Chapter9ExerciseTests(TestCase):
         template_base_path = os.path.join(settings.TEMPLATE_DIR, 'rango')
         template_path = os.path.join(template_base_path, 'restricted.html')
         self.assertTrue(os.path.exists(template_path), f"{FAILURE_HEADER}We couldn't find the 'restricted.html' template in the 'templates/rango/' directory. Did you put it in the right place? Did you complete the exercises?{FAILURE_FOOTER}")
-    
+
     def test_restricted_template_inherits(self):
         """
         Checks for template inheritance in restricted.html.
@@ -533,23 +533,23 @@ class Chapter9ExerciseTests(TestCase):
 
         self.assertTrue(re.search(full_title_pattern, content), f"{FAILURE_HEADER}The <title> of the response for 'rango:restricted' is not correct. Check your restricted.html template, and try again.{FAILURE_FOOTER}")
         self.assertTrue(re.search(block_title_pattern, template_str), f"{FAILURE_HEADER}Is restricted.html using template inheritance? Is your <title> block correct?{FAILURE_FOOTER}")
-    
+
     def test_bad_add_page(self):
         """
         Tests to see if a page cannot be added when not logged in.
         """
         populate()
         response = self.client.get(reverse('rango:add_page', kwargs={'category_name_slug': 'python'}))
-        
+
         self.assertEqual(response.status_code, 302, f"{FAILURE_HEADER}When not logged in and attempting to add a page, we should be redirected. But we weren't. Check your add_page() implementation.{FAILURE_FOOTER}")
         self.assertTrue(response.url.startswith(reverse('rango:login')), f"{FAILURE_HEADER}When not logged in and attempting to add a page, we should be redirected to the login page. But we weren't. Check your add_page() implementation.{FAILURE_FOOTER}")
-    
+
     def test_bad_add_category(self):
         """
         Tests to see if a category cannot be added when not logged in.
         """
         response = self.client.get(reverse('rango:add_category'))
-        
+
         self.assertEqual(response.status_code, 302, f"{FAILURE_HEADER}When attempting to add a category when not logged in, we weren't redirected when we should be. Check your add_category() implementation.{FAILURE_FOOTER}")
         self.assertTrue(response.url.startswith(reverse('rango:login')), f"{FAILURE_HEADER}When attempting to add a category when not logged in, we weren't redirected to the login view. Check your add_category() implementation, and try again.{FAILURE_FOOTER}")
 
@@ -561,12 +561,12 @@ class Chapter9ExerciseTests(TestCase):
         user_object = create_user_object()
         self.client.login(username='testuser', password='testabc123')
         response = self.client.get(reverse('rango:add_page', kwargs={'category_name_slug': 'python'}))
-        
+
         self.assertEqual(response.status_code, 200, f"{FAILURE_HEADER}We weren't greeted with a HTTP status code when attempting to add a page when logged in. Check your add_page() view.{FAILURE_FOOTER}")
-        
+
         content = response.content.decode()
         self.assertTrue('Add a Page' in content, f"{FAILURE_HEADER}When adding a page (when logged in), we didn't see the expected page. Please check your add_page() view.{FAILURE_FOOTER}")
-    
+
     def test_good_add_category(self):
         """
         Tests to see if a category can be added when logged in.
@@ -574,7 +574,7 @@ class Chapter9ExerciseTests(TestCase):
         user_object = create_user_object()
         self.client.login(username='testuser', password='testabc123')
         response = self.client.get(reverse('rango:add_category'))
-        
+
         self.assertEqual(response.status_code, 200, f"{FAILURE_HEADER}When adding a category (when logged in), we didn't get a HTTP 200 response. Please check your add_category() view.{FAILURE_FOOTER}")
 
         content = response.content.decode()
@@ -600,7 +600,7 @@ class Chapter9ExerciseTests(TestCase):
         """
         populate()
         content = self.client.get(reverse('rango:show_category', kwargs={'category_name_slug': 'python'})).content.decode()
-        
+
         self.assertTrue(reverse('rango:add_page', kwargs={'category_name_slug': 'python'}) not in content, f"{FAILURE_HEADER}The Add Page link was present in the show_category() response when a user was not logged in. It shouldn't be there. Did you do the exercises?{FAILURE_FOOTER}")
 
         user_object = create_user_object()
